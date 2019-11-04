@@ -23,6 +23,8 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,26 +76,23 @@ baiduMap.addOverlay(textOption);
                 return false;
             }
         });
-downloadAndDrawShops();
+        final ShopLoader shopLoader=new ShopLoader();
+        Handler handler=new Handler(){
+            public void handleMessage(Message msg){
+                drawshops(shopLoader.getShops());
+            }
+
+        };
+        shopLoader.load(handler,"http://file.nidama.net/class/mobile_develop/data/bookstore.json");//加网址
         return view;
     }
 
-    private void downloadAndDrawShops() {
-       final ShopLoader shopLoader=new ShopLoader();
-        final Handler handler=new Handler(){
-            public void handleMessager(Message msg){
-
-            }
-
-        }
-
-        String data=shopLoader.download("");//加网址
-        shopLoader.parseJson(data);
-        for(int i=0;i<shopLoader.getShops().size();++i)
-        {
+void drawshops(ArrayList<Shop>shops) {
             if(mapView==null)return ;
             BaiduMap mbaidumap=mapView.getMap();
-            Shop shop=shopLoader.getShops().get(i);
+    for(int i=0;i<shops.size();++i)
+    {
+            Shop shop=shops.get(i);
             LatLng point=new LatLng(shop.getLatitude(),shop.getLongitude());
             BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.down_round);
 //准备 marker option 添加 marker 使用
@@ -104,7 +103,6 @@ downloadAndDrawShops();
             mbaidumap.addOverlay(textOption);
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();

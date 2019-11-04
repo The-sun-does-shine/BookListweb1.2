@@ -1,5 +1,6 @@
 package com.casper.testdrivendevelopment;
 
+import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
 
 public class ShopLoader {
 public ArrayList<Shop> getShops()
@@ -83,5 +85,14 @@ public void parseJson(String content){
         e.printStackTrace();
     }
 }
+    public void load(final Handler handler, final String url){
+    new Thread(new Runnable()
+    { public void run()
+    { String content = download(url);
+    parseJson(content);
+    handler.sendEmptyMessage(1);
+     }
+     }).start();}
+
 
 }
